@@ -1,24 +1,36 @@
 package org.firstinspires.ftc.teamcode.drive.subsystems;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorTouch;
 
 public class Crane {
     //MOTOR DECLARATION
     public DcMotor motorCrane1, motorCrane2;
-    public Servo servoGrippy, servoSlide1, servoSlide2;
-
+    public CRServo servoGrippy, servoSlide1, servoSlide2;
+    public TouchSensor slideSensor;
+    public AnalogInput slideEncoder;
     //PID VARIABLES
     public int craneTarget = 0;
-    public static double craneP = 0.02, craneI = 0, craneD = 0.001;
+    public static double craneP = 0.017, craneI = 0, craneD = 0.0005;
     double craneIntegralSum = 0;
-    public static double craneF = 0.25;
-    public static int craneOffset = 50;
+    public static double craneF = 0.28;
+    public static int craneOffset = 90;
+    public double slideExtension = 0;
+    public double slideEncoderLastPosition = 0;
     private final double threetwelvemotorticksindegree = 537.7 / 360;
     double craneLastError = 0;
+    public int gripperDirection = 1;
+    public int slidesDirection = 1;
+    public double gripperPower = 1;
+    public double slidesPower = 1;
     ElapsedTime craneTimer = new ElapsedTime();
 
     //MOTOR INIT
@@ -26,9 +38,13 @@ public class Crane {
         motorCrane1 = hardwareMap.dcMotor.get("motorCrane1");
         motorCrane2 = hardwareMap.dcMotor.get("motorCrane2");
 
-        servoGrippy = hardwareMap.servo.get("servoGrippy");
-        servoSlide1 = hardwareMap.servo.get("servoSlide1");
-        servoSlide2 = hardwareMap.servo.get("servoSlide2");
+        servoGrippy = hardwareMap.crservo.get("servoGrippy");
+        servoSlide1 = hardwareMap.crservo.get("servoSlide1");
+        servoSlide2 = hardwareMap.crservo.get("servoSlide2");
+
+        slideSensor = hardwareMap.touchSensor.get("slideSensor");
+
+        slideEncoder = hardwareMap.analogInput.get("slideEncoder");
 
         motorCrane1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorCrane1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -38,21 +54,50 @@ public class Crane {
         motorCrane2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorCrane2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorCrane2.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        servoGrippy.setDirection(Servo.Direction.FORWARD);
-        servoSlide1.setDirection(Servo.Direction.FORWARD);
-        servoSlide2.setDirection(Servo.Direction.REVERSE);
+        servoGrippy.setDirection(CRServo.Direction.FORWARD);
+        servoSlide1.setDirection(CRServo.Direction.FORWARD);
+        servoSlide2.setDirection(CRServo.Direction.REVERSE);
 
     }
     //MOVE THE SLIDES FUNCTION
-    public void moveSlides(double pos){
-        servoSlide1.setPosition(pos);
-        servoSlide2.setPosition(pos);
+    public void setSlides(double slidesPower){
+        if(slidesDirection == 1){
+            servoSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
+            servoSlide2.setDirection(DcMotorSimple.Direction.REVERSE);
+            if(slideExtension < 30 && slideSensor.isPressed()){
+                servoSlide1.setPower(0);
+                servoSlide2.setPower(0);
+            }
+            else {
+                servoSlide1.setPower(slidesPower);
+                servoSlide2.setPower(slidesPower);
+            }
+        }
+
+        else if (slidesDirection == -1){
+            servoSlide1.setDirection(DcMotorSimple.Direction.REVERSE);
+            servoSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
+            if(slideExtension > 40 && slideSensor.isPressed()){
+                servoSlide1.setPower(0);
+                servoSlide2.setPower(0);
+            }
+            else {
+                servoSlide1.setPower(slidesPower);
+                servoSlide2.setPower(slidesPower);
+            }
+        }
+
     }
 
-    //SET THE POSITION OF THE CLAW FUNCTION
-    public void setGripper(double pos){
-        servoGrippy.setPosition(pos);
+    //SET DIRECTION AND THE POWER OF THE GRIPPER
+    public void setGripper(double gripperPower){
+        if(gripperDirection == 1) {
+            servoGrippy.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+        else if(gripperDirection == -1) {
+            servoGrippy.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+        servoGrippy.setPower(gripperPower);
     }
 
     //PID FOR MOVING THE CRANE

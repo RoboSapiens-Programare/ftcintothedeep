@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.drive.opmodetele;
 
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.teamcode.drive.robot.Robot;
@@ -34,6 +35,7 @@ public class LinearDriveMode extends LinearOpMode {
             idle();
         }
         // INIT CODE
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData(">", "Initialized");
         telemetry.update();
 
@@ -48,36 +50,46 @@ public class LinearDriveMode extends LinearOpMode {
 
             // GAMEPAD 2
 
-            //EXTEND AND RETRACT SLIDES
+//            EXTEND AND RETRACT SLIDES
+
             if (gamepad2.left_bumper) {
-                servoPosSlides = -1;
-                robot.crane.moveSlides(servoPosSlides);
+                robot.crane.slidesDirection = 1;
+                robot.crane.setSlides(5);
+                if(robot.crane.slideEncoderLastPosition > robot.crane.slideEncoder.getVoltage()){
+                    robot.crane.slideExtension -= 3.3;
+                }
             } else if (gamepad2.right_bumper) {
-                servoPosSlides = 1;
-                robot.crane.moveSlides(servoPosSlides);
+                robot.crane.slidesDirection = -1;
+                robot.crane.setSlides(5);
+                if(robot.crane.slideEncoderLastPosition < robot.crane.slideEncoder.getVoltage()){
+                    robot.crane.slideExtension += 3.3;
+                }
             } else {
-                servoPosSlides = 0;
-                robot.crane.moveSlides(servoPosSlides);
+               robot.crane.setSlides(0);
             }
+            robot.crane.slideEncoderLastPosition = robot.crane.slideEncoder.getVoltage();
 
             //MOVE THE ENTIRE CRANE
 
             if(gamepad2.left_trigger > 0.1){
-                robot.crane.craneTarget -= (int) calculateThrottle(gamepad1.left_trigger);
+                robot.crane.craneTarget -= (int) calculateThrottle(gamepad2.left_trigger);
             }
             else if(gamepad2.right_trigger > 0.1){
-                robot.crane.craneTarget += (int) calculateThrottle(gamepad1.right_trigger);
+                robot.crane.craneTarget += (int) calculateThrottle(gamepad2.right_trigger);
             }
             robot.crane.motorCrane1.setPower(robot.crane.cranePower(robot.crane.craneTarget));
             robot.crane.motorCrane2.setPower(robot.crane.cranePower(robot.crane.craneTarget));
 
-            //OPEN AND CLOSE THE GRIPPER
+//            OPEN AND CLOSE THE GRIPPER
             if (gamepad2.a) {
-                robot.crane.setGripper(0.9);
+                robot.crane.gripperDirection = 1;
+                robot.crane.setGripper(1);
             }
-            if (gamepad2.b) {
-                robot.crane.setGripper(0.1);
+            else if (gamepad2.b) {
+                robot.crane.gripperDirection = -1;
+                robot.crane.setGripper(1);
             }
+            else robot.crane.setGripper(0);
 
             // GAMEPAD 1
 
@@ -97,7 +109,12 @@ public class LinearDriveMode extends LinearOpMode {
 
 
 
-
+                telemetry.addData("crane target: ", robot.crane.craneTarget);
+                telemetry.addData("right trigger: ", gamepad2.right_trigger);
+                telemetry.addData("encoder value: ", robot.crane.slideEncoder.getVoltage());
+                telemetry.addData("last position ", robot.crane.slideEncoderLastPosition);
+                telemetry.addData("slide extension ", robot.crane.slideExtension);
+                telemetry.addData("sensor touch: ", robot.crane.slideSensor.isPressed());
 //                telemetry.addData("CRANE TICKS LEFT: ", robot.crane.motorCraneLeft.getCurrentPosition());
 //                telemetry.addData("CRANE TICKS RIGHT: ", robot.crane.motorCraneRight.getCurrentPosition());
 //                telemetry.addData("DIRECTION: ", direction);

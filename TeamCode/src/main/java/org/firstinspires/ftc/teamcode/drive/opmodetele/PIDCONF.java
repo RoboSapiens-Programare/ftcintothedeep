@@ -18,17 +18,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PIDCONF extends OpMode {
     private PIDController controller;
 
-    public static double p = 0.02, i = 0, d = 0.001;
+    public static double p = 0, i = 0, d = 0;
     double IntegralSum = 0;
-    public static double f = 0.25;
-    public static double delay = 0.004 ;
+    public static double f = 0;
+    public static double delay = 0.004;
 
     public static int target = 0;
     public static int offset = 50;
 
     private final double ticks_in_degree = 537.7 / 360;
 
-    private DcMotorEx motorCraneLeft,motorCraneRight;
+    private DcMotorEx motorCrane1, motorCrane2;
 
     ElapsedTime timer = new ElapsedTime();
     double lastError = 0;
@@ -45,19 +45,19 @@ public class PIDCONF extends OpMode {
 
 
 
-        motorCraneLeft = hardwareMap.get(DcMotorEx.class, "motorCraneLeft");
-        motorCraneRight = hardwareMap.get(DcMotorEx.class, "motorCraneRight");
-        motorCraneLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorCraneRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorCraneLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorCraneRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorCraneLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorCraneRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorCrane1 = hardwareMap.get(DcMotorEx.class, "motorCrane1");
+        motorCrane2 = hardwareMap.get(DcMotorEx.class, "motorCrane2");
+        motorCrane1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorCrane2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorCrane1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorCrane2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorCrane1.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorCrane2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void loop(){
         controller.setPID(p, i, d);
-        int armPos = motorCraneLeft.getCurrentPosition();
+        int armPos = motorCrane1.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(Math.toRadians((armPos - offset) / ticks_in_degree)) * f;
 
@@ -69,8 +69,8 @@ public class PIDCONF extends OpMode {
         if(gamepad1.left_trigger > 0.1){
             target -= (int) calculateThrottle(gamepad1.left_trigger);
         }
-        motorCraneLeft.setPower(power);
-        motorCraneRight.setPower(power);
+        motorCrane1.setPower(power);
+        motorCrane2.setPower(power);
 
 
         telemetry.addData("pos ", armPos);
