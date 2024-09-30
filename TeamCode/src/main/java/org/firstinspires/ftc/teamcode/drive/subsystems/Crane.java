@@ -64,7 +64,7 @@ public class Crane {
         if(slidesDirection == 1){
             servoSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
             servoSlide2.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(slideExtension < 30 && slideSensor.isPressed()){
+            if(slideExtension < 120 && slideSensor.isPressed()){
                 servoSlide1.setPower(0);
                 servoSlide2.setPower(0);
             }
@@ -77,7 +77,7 @@ public class Crane {
         else if (slidesDirection == -1){
             servoSlide1.setDirection(DcMotorSimple.Direction.REVERSE);
             servoSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
-            if(slideExtension > 40 && slideSensor.isPressed()){
+            if(slideExtension > 150 && slideSensor.isPressed()){
                 servoSlide1.setPower(0);
                 servoSlide2.setPower(0);
             }

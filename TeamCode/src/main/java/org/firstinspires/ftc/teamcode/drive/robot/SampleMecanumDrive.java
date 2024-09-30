@@ -66,12 +66,13 @@ public class  SampleMecanumDrive extends MecanumDrive {
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
+
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -104,6 +105,11 @@ public class  SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

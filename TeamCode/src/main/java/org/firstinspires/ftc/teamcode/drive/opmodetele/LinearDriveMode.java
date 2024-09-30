@@ -92,24 +92,16 @@ public class LinearDriveMode extends LinearOpMode {
             else robot.crane.setGripper(0);
 
             // GAMEPAD 1
-
-            //CHANGE THE DIRECTION OF THE MECANUM DRIVETRAIN
-                if (gamepad1.cross) {
-                    if (getRuntime() > 0.2) {
-                        this.resetRuntime();
-                        direction = direction * -1;
-                    }
-                }
-
-                if (direction == 1) {
-                    robot.drive.setDrivePower(new Pose2d(calculateThrottle((gamepad1.left_stick_y)) * 0.8, calculateThrottle((float) (-gamepad1.left_stick_x)) * 0.8, calculateThrottle((float) (-gamepad1.right_stick_x)) * 0.8));
-                } else
-                    robot.drive.setDrivePower(new Pose2d(calculateThrottle((-gamepad1.left_stick_y)) * 0.8, calculateThrottle((float) (gamepad1.left_stick_x)) * 0.8, calculateThrottle((float) (gamepad1.right_stick_x)) * 0.8));
+            robot.drive.setWeightedDrivePower(new Pose2d((-gamepad1.left_stick_y * 0.4),(-gamepad1.left_stick_x * 0.4),(-gamepad1.right_stick_x * 0.4)));
 
 
 
 
-                telemetry.addData("crane target: ", robot.crane.craneTarget);
+
+
+
+
+            telemetry.addData("crane target: ", robot.crane.craneTarget);
                 telemetry.addData("right trigger: ", gamepad2.right_trigger);
                 telemetry.addData("encoder value: ", robot.crane.slideEncoder.getVoltage());
                 telemetry.addData("last position ", robot.crane.slideEncoderLastPosition);
