@@ -1,20 +1,18 @@
-
 package org.firstinspires.ftc.teamcode.drive.opmodetele;
 
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
 
 import org.firstinspires.ftc.teamcode.drive.robot.Robot;
 
-@TeleOp(name="MecanumDriveMode", group="Linear OpMode")
+@TeleOp(name="FSMMECANUM", group="Linear OpMode")
 
-public class LinearDriveMode extends LinearOpMode {
+public class FSMLinearDriveMode extends LinearOpMode {
     private Robot robot = null;
     int direction = 1; //daca e true e in fata daca e false e in spate
     double servoPosSlides = 0.5;
@@ -79,6 +77,7 @@ public class LinearDriveMode extends LinearOpMode {
                 robot.crane.craneTarget += (int) calculateThrottle(gamepad2.right_trigger);
             }
             robot.crane.motorCrane1.setPower(robot.crane.cranePower(robot.crane.craneTarget));
+            robot.crane.motorCrane2.setPower(robot.crane.cranePower(robot.crane.craneTarget));
 
 //            OPEN AND CLOSE THE GRIPPER
             if (gamepad2.a) {
@@ -92,7 +91,7 @@ public class LinearDriveMode extends LinearOpMode {
             else robot.crane.setGripper(0);
 
             // GAMEPAD 1
-            robot.drive.setWeightedDrivePower(new Pose2d((-gamepad1.left_stick_y),(-gamepad1.left_stick_x),(-gamepad1.right_stick_x)));
+            robot.drive.setWeightedDrivePower(new Pose2d((-gamepad1.left_stick_y * 0.4),(-gamepad1.left_stick_x * 0.4),(-gamepad1.right_stick_x * 0.4)));
 
 
 
@@ -117,3 +116,6 @@ public class LinearDriveMode extends LinearOpMode {
         }
 
     }
+
+
+
