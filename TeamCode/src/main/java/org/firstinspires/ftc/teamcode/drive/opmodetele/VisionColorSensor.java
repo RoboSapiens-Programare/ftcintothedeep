@@ -57,11 +57,31 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
+
 public class VisionColorSensor extends LinearOpMode
 {
+    public int yellow(int rgb) {
+        // Extract red, green, and blue components from the RGB value
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = rgb & 0xFF;
+
+        // Calculate yellow component by combining red and green, minus blue influence
+        int yellowComponent = (red + green - blue) / 2;
+
+        // Ensure the result is within 0-255 range
+        return Math.max(0, Math.min(255, yellowComponent));
+    }
+
     @Override
     public void runOpMode()
     {
+        boolean isRed = false;
+
+
+
+
+
         /* Build a "Color Sensor" vision processor based on the PredominantColorProcessor class.
          *
          * - Focus the color sensor by defining a RegionOfInterest (ROI) which you want to inspect.
@@ -82,11 +102,11 @@ public class VisionColorSensor extends LinearOpMode
          *
          *     Note that in the example shown below, only some of the available colors are included.
          *     This will force any other colored region into one of these colors.
-         *     eg: Green may be reported as YELLOW, as this may be the "closest" match.
+         *     eg: Green may be reported as YELLOW, as this may be the "closest" match.https://github.com/RoboSapiens-Programare/ftcintothedeep/tree/concept-vision-color-sensor
          */
 
 
-        // The color sensor numbering system represents it's coordinates in a matrix
+        // The color sensor numbering system represents its coordinates in a matrix
         // Example: colorSensor11 would be at coordonates 1:1 of the matrix
 
         PredominantColorProcessor colorSensor11 = new PredominantColorProcessor.Builder()
@@ -186,13 +206,18 @@ public class VisionColorSensor extends LinearOpMode
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
         while (opModeIsActive() || opModeInInit())
         {
+
+            /*
             telemetry.addData("DS preview on/off", "3 dots, Camera Stream\n");
+            */
 
             // Request the most recent color analysis.
             // This will return the closest matching colorSwatch and the predominant RGB color.
             // Note: to take actions based on the detected color, simply use the colorSwatch in a comparison or switch.
             //  eg:
             //      if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {... some code  ...}
+
+
             PredominantColorProcessor.Result result11 = colorSensor11.getAnalysis();
             PredominantColorProcessor.Result result12 = colorSensor12.getAnalysis();
             PredominantColorProcessor.Result result13 = colorSensor13.getAnalysis();
@@ -204,7 +229,134 @@ public class VisionColorSensor extends LinearOpMode
             PredominantColorProcessor.Result result33 = colorSensor33.getAnalysis();
 
 
+            int maxRed = 0;
+            int resultMaxRed = 0;
+            if (Color.red(result11.rgb) > maxRed) {
+                maxRed = Color.red(result11.rgb);
+                resultMaxRed = 1;
+            }
+            if (Color.red(result12.rgb) > maxRed) {
+                maxRed = Color.red(result12.rgb);
+                resultMaxRed = 2;
+            }
+            if (Color.red(result13.rgb) > maxRed) {
+                maxRed = Color.red(result13.rgb);
+                resultMaxRed = 3;
+            }
+            if (Color.red(result21.rgb) > maxRed) {
+                maxRed = Color.red(result21.rgb);
+                resultMaxRed = 4;
+            }
+            if (Color.red(result22.rgb) > maxRed) {
+                maxRed = Color.red(result22.rgb);
+                resultMaxRed = 5;
+            }
+            if (Color.red(result23.rgb) > maxRed) {
+                maxRed = Color.red(result23.rgb);
+                resultMaxRed = 6;
+            }
+            if (Color.red(result31.rgb) > maxRed) {
+                maxRed = Color.red(result31.rgb);
+                resultMaxRed = 7;
+            }
+            if (Color.red(result32.rgb) > maxRed) {
+                maxRed = Color.red(result32.rgb);
+                resultMaxRed = 8;
+            }
+            if (Color.red(result33.rgb) > maxRed) {
+                maxRed = Color.red(result33.rgb);
+                resultMaxRed = 9;
+            }
 
+
+
+            int maxBlue = 0;
+            int resultMaxBlue = 0;
+            if (Color.blue(result11.rgb) > maxBlue) {
+                maxBlue = Color.blue(result11.rgb);
+                resultMaxBlue = 1;
+            }
+            if (Color.blue(result12.rgb) > maxBlue) {
+                maxBlue = Color.blue(result12.rgb);
+                resultMaxBlue = 2;
+            }
+            if (Color.blue(result13.rgb) > maxBlue) {
+                maxBlue = Color.blue(result13.rgb);
+                resultMaxBlue = 3;
+            }
+            if (Color.blue(result21.rgb) > maxBlue) {
+                maxBlue = Color.blue(result21.rgb);
+                resultMaxBlue = 4;
+            }
+            if (Color.blue(result22.rgb) > maxBlue) {
+                maxBlue = Color.blue(result22.rgb);
+                resultMaxBlue = 5;
+            }
+            if (Color.blue(result23.rgb) > maxBlue) {
+                maxBlue = Color.blue(result23.rgb);
+                resultMaxBlue = 6;
+            }
+            if (Color.blue(result31.rgb) > maxBlue) {
+                maxBlue = Color.blue(result31.rgb);
+                resultMaxBlue = 7;
+            }
+            if (Color.blue(result32.rgb) > maxBlue) {
+                maxBlue = Color.blue(result32.rgb);
+                resultMaxBlue = 8;
+            }
+            if (Color.blue(result33.rgb) > maxBlue) {
+                maxBlue = Color.blue(result33.rgb);
+                resultMaxBlue = 9;
+            }
+
+
+            int maxYellow = 0;
+            int resultMaxYellow = 0;
+            if (result11.rgb > maxYellow) {
+                maxYellow = yellow(result11.rgb);
+                resultMaxYellow = 1;
+            }
+            if (yellow(result12.rgb) > maxYellow) {
+                maxYellow = yellow(result12.rgb);
+                resultMaxYellow = 2;
+            }
+            if (yellow(result13.rgb) > maxYellow) {
+                maxYellow = yellow(result13.rgb);
+                resultMaxYellow = 3;
+            }
+            if (yellow(result21.rgb) > maxYellow) {
+                maxYellow = yellow(result21.rgb);
+                resultMaxYellow = 4;
+            }
+            if (yellow(result22.rgb) > maxYellow) {
+                maxYellow = yellow(result22.rgb);
+                resultMaxYellow = 5;
+            }
+            if (yellow(result23.rgb) > maxYellow) {
+                maxYellow = yellow(result23.rgb);
+                resultMaxYellow = 6;
+            }
+            if (yellow(result31.rgb) > maxYellow) {
+                maxYellow = yellow(result31.rgb);
+                resultMaxYellow = 7;
+            }
+            if (yellow(result32.rgb) > maxYellow) {
+                maxYellow = yellow(result32.rgb);
+                resultMaxYellow = 8;
+            }
+            if (yellow(result33.rgb) > maxYellow) {
+                maxYellow = yellow(result33.rgb);
+                resultMaxYellow = 9;
+            }
+
+
+            telemetry.addData("Best Red Match:", resultMaxRed);
+            telemetry.addData("Best Blue Match:", resultMaxBlue);
+            telemetry.addData("Best Yellow Match:", resultMaxYellow);
+            telemetry.update();
+
+
+            /*
             // Display the Color Sensor result.
             telemetry.addData("Best Match 1:1:", result11.closestSwatch);
             telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result11.rgb), Color.green(result11.rgb), Color.blue(result11.rgb)));
@@ -225,6 +377,9 @@ public class VisionColorSensor extends LinearOpMode
             telemetry.addData("Best Match 3:3:", result33.closestSwatch);
             telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result33.rgb), Color.green(result33.rgb), Color.blue(result33.rgb)));
             telemetry.update();
+            */
+
+
 
             sleep(20);
         }
