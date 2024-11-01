@@ -69,6 +69,7 @@ public class VisionColorSensor extends LinearOpMode
          *     1) standard image coordinates or 2) a normalized +/- 1.0 coordinate system.
          *     Use one form of the ImageRegion class to define the ROI.
          *         ImageRegion.entireFrame()
+         *
          *         ImageRegion.asImageCoordinates(50, 50,  150, 150)  100x100 pixel square near the upper left corner
          *         ImageRegion.asUnityCenterCoordinates(-0.1, 0.1, 0.1, -0.1)  10% width/height square centered on screen
          *
@@ -83,13 +84,84 @@ public class VisionColorSensor extends LinearOpMode
          *     This will force any other colored region into one of these colors.
          *     eg: Green may be reported as YELLOW, as this may be the "closest" match.
          */
-        PredominantColorProcessor colorSensor = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.1, 0.1, 0.1, -0.1))
+
+
+        // The color sensor numbering system represents it's coordinates in a matrix
+        // Example: colorSensor11 would be at coordonates 1:1 of the matrix
+
+        PredominantColorProcessor colorSensor11 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(0, 0,  120, 80) )
                 .setSwatches(
                         PredominantColorProcessor.Swatch.RED,
                         PredominantColorProcessor.Swatch.BLUE,
                         PredominantColorProcessor.Swatch.YELLOW)
                 .build();
+
+        PredominantColorProcessor colorSensor12 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(120, 0,  200, 80) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor13 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(200, 0,  320, 80) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor21 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(0, 80,  120, 160) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor22 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(120, 80,  200, 160) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor23 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(200, 80,  320, 160) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor31 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(0, 160,  120, 240) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor32 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(120, 160,  200, 240) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+        PredominantColorProcessor colorSensor33 = new PredominantColorProcessor.Builder()
+                .setRoi(ImageRegion.asImageCoordinates(200, 160,  320, 240) )
+                .setSwatches(
+                        PredominantColorProcessor.Swatch.RED,
+                        PredominantColorProcessor.Swatch.BLUE,
+                        PredominantColorProcessor.Swatch.YELLOW)
+                .build();
+
+
 
         /*
          * Build a vision portal to run the Color Sensor process.
@@ -104,7 +176,7 @@ public class VisionColorSensor extends LinearOpMode
          *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
          */
         VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(colorSensor)
+                .addProcessors(colorSensor11, colorSensor12, colorSensor13, colorSensor21, colorSensor22, colorSensor23, colorSensor31, colorSensor32, colorSensor33)
                 .setCameraResolution(new Size(320, 240))
                 .setCamera(hardwareMap.get(WebcamName.class, "Camera"))
                 .build();
@@ -121,11 +193,37 @@ public class VisionColorSensor extends LinearOpMode
             // Note: to take actions based on the detected color, simply use the colorSwatch in a comparison or switch.
             //  eg:
             //      if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {... some code  ...}
-            PredominantColorProcessor.Result result = colorSensor.getAnalysis();
+            PredominantColorProcessor.Result result11 = colorSensor11.getAnalysis();
+            PredominantColorProcessor.Result result12 = colorSensor12.getAnalysis();
+            PredominantColorProcessor.Result result13 = colorSensor13.getAnalysis();
+            PredominantColorProcessor.Result result21 = colorSensor21.getAnalysis();
+            PredominantColorProcessor.Result result22 = colorSensor22.getAnalysis();
+            PredominantColorProcessor.Result result23 = colorSensor23.getAnalysis();
+            PredominantColorProcessor.Result result31 = colorSensor31.getAnalysis();
+            PredominantColorProcessor.Result result32 = colorSensor32.getAnalysis();
+            PredominantColorProcessor.Result result33 = colorSensor33.getAnalysis();
+
+
 
             // Display the Color Sensor result.
-            telemetry.addData("Best Match:", result.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result.rgb), Color.green(result.rgb), Color.blue(result.rgb)));
+            telemetry.addData("Best Match 1:1:", result11.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result11.rgb), Color.green(result11.rgb), Color.blue(result11.rgb)));
+            telemetry.addData("Best Match 1:2:", result12.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result12.rgb), Color.green(result12.rgb), Color.blue(result12.rgb)));
+            telemetry.addData("Best Match 1:3:", result13.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result13.rgb), Color.green(result13.rgb), Color.blue(result13.rgb)));
+            telemetry.addData("Best Match 2:1:", result21.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result21.rgb), Color.green(result21.rgb), Color.blue(result21.rgb)));
+            telemetry.addData("Best Match 2:2:", result22.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result22.rgb), Color.green(result22.rgb), Color.blue(result22.rgb)));
+            telemetry.addData("Best Match 2:3:", result23.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result23.rgb), Color.green(result23.rgb), Color.blue(result23.rgb)));
+            telemetry.addData("Best Match 3:1:", result31.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result31.rgb), Color.green(result31.rgb), Color.blue(result31.rgb)));
+            telemetry.addData("Best Match 3:2:", result32.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result32.rgb), Color.green(result32.rgb), Color.blue(result32.rgb)));
+            telemetry.addData("Best Match 3:3:", result33.closestSwatch);
+            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result33.rgb), Color.green(result33.rgb), Color.blue(result33.rgb)));
             telemetry.update();
 
             sleep(20);
