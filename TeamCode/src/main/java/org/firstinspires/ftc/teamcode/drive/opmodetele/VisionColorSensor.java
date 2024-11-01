@@ -229,7 +229,7 @@ public class VisionColorSensor extends LinearOpMode
             PredominantColorProcessor.Result result33 = colorSensor33.getAnalysis();
 
 
-            int maxRed = 0;
+            int maxRed = 190;
             int resultMaxRed = 0;
             if (Color.red(result11.rgb) > maxRed) {
                 maxRed = Color.red(result11.rgb);
@@ -270,7 +270,7 @@ public class VisionColorSensor extends LinearOpMode
 
 
 
-            int maxBlue = 0;
+            int maxBlue = 145;
             int resultMaxBlue = 0;
             if (Color.blue(result11.rgb) > maxBlue) {
                 maxBlue = Color.blue(result11.rgb);
@@ -310,7 +310,7 @@ public class VisionColorSensor extends LinearOpMode
             }
 
 
-            int maxYellow = 0;
+            int maxYellow = 145;
             int resultMaxYellow = 0;
             if (result11.rgb > maxYellow) {
                 maxYellow = yellow(result11.rgb);
@@ -349,7 +349,9 @@ public class VisionColorSensor extends LinearOpMode
                 resultMaxYellow = 9;
             }
 
-
+            telemetry.addData("max yellow: ", maxYellow);
+            telemetry.addData("max red: ", maxRed);
+            telemetry.addData("max blue: ", maxBlue);
             telemetry.addData("Best Red Match:", resultMaxRed);
             telemetry.addData("Best Blue Match:", resultMaxBlue);
             telemetry.addData("Best Yellow Match:", resultMaxYellow);
