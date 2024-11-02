@@ -33,55 +33,29 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
-/*
- * This OpMode illustrates how to use a video source (camera) as a color sensor
- *
- * A "color sensor" will typically determine the color of the object that it is pointed at.
- *
- * This sample performs the same function, except it uses a video camera to inspect an object or scene.
- * The user may choose to inspect all, or just a Region of Interest (ROI), of the active camera view.
- * The user must also provide a list of "acceptable colors" (Swatches) from which the closest matching color will be selected.
- *
- * To perform this function, a VisionPortal runs a PredominantColorProcessor process.
- *   The PredominantColorProcessor process is created first, and then the VisionPortal is built to use this process.
- *   The PredominantColorProcessor analyses the ROI and splits the colored pixels into several color-clusters.
- *   The largest of these clusters is then considered to be the "Predominant Color"
- *   The process then matches the Predominant Color with the closest Swatch and returns that match.
- *
- * To aid the user, a colored rectangle is drawn on the camera preview to show the RegionOfInterest,
- * The Predominant Color is used to paint the rectangle border, so the user can verify that the color is reasonable.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
-
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
 
 public class VisionColorSensor extends LinearOpMode
 {
     public int yellow(int rgb) {
         // Extract red, green, and blue components from the RGB value
+
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
 
         // Calculate yellow component by combining red and green, minus blue influence
+
         int yellowComponent = (red + green - blue) / 2;
 
         // Ensure the result is within 0-255 range
+
         return Math.max(0, Math.min(255, yellowComponent));
     }
 
     @Override
     public void runOpMode()
     {
-        boolean isRed = false;
-
-
-
-
-
         /* Build a "Color Sensor" vision processor based on the PredominantColorProcessor class.
          *
          * - Focus the color sensor by defining a RegionOfInterest (ROI) which you want to inspect.
@@ -105,98 +79,50 @@ public class VisionColorSensor extends LinearOpMode
          *     eg: Green may be reported as YELLOW, as this may be the "closest" match.https://github.com/RoboSapiens-Programare/ftcintothedeep/tree/concept-vision-color-sensor
          */
 
+        /*
+         * We will use a Swatch vector to define the acceptable colors.
+         *  We will use the image coordinates to define the Region of Interest (ROI) in the roiCoordinates matrix.
+         *  The image coordinates start at the top left corner of the image and are: left, top, right, bottom; they all start from the top left.
+         *  We will use a PredominantColorProcessor vector to define all of the sectors.
+         *  Then we will build all of the sectors using the Swatch vector, the roiCoordinates matrix and the sectors.
+         */
 
-        // The color sensor numbering system represents its coordinates in a matrix
-        // Example: colorSensor11 would be at coordonates 1:1 of the matrix
 
-        PredominantColorProcessor colorSensor11 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(0, 0,  120, 80) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
+        final PredominantColorProcessor.Swatch swatches[] = {
+                PredominantColorProcessor.Swatch.RED,
+                PredominantColorProcessor.Swatch.BLUE,
+                PredominantColorProcessor.Swatch.YELLOW
+        };
 
-        PredominantColorProcessor colorSensor12 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(120, 0,  200, 80) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
+        int[][] roiCoordinates = {
+                {0, 0, 120, 80}, {120, 0, 200, 80}, {200, 0, 320, 80},
+                {0, 80, 120, 160}, {120, 80, 200, 160}, {200, 80, 320, 160},
+                {0, 160, 120, 240}, {120, 160, 200, 240}, {200, 160, 320, 240}
+        };
 
-        PredominantColorProcessor colorSensor13 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(200, 0,  320, 80) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
+        PredominantColorProcessor[] sectors = new PredominantColorProcessor[roiCoordinates.length];
 
-        PredominantColorProcessor colorSensor21 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(0, 80,  120, 160) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
-
-        PredominantColorProcessor colorSensor22 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(120, 80,  200, 160) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
-
-        PredominantColorProcessor colorSensor23 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(200, 80,  320, 160) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
-
-        PredominantColorProcessor colorSensor31 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(0, 160,  120, 240) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
-
-        PredominantColorProcessor colorSensor32 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(120, 160,  200, 240) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
-
-        PredominantColorProcessor colorSensor33 = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(200, 160,  320, 240) )
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW)
-                .build();
+        for (int i = 0; i < roiCoordinates.length; i++) {
+            int[] coords = roiCoordinates[i];
+            sectors[i] = new PredominantColorProcessor.Builder()
+                    .setRoi(ImageRegion.asImageCoordinates(coords[0], coords[1], coords[2], coords[3]))
+                    .setSwatches(swatches)
+                    .build();
+        }
 
 
 
         /*
-         * Build a vision portal to run the Color Sensor process.
-         *
+         * Build a vision portal to run the sectors created above.
          *  - Add the colorSensor process created above.
          *  - Set the desired video resolution.
          *      Since a high resolution will not improve this process, choose a lower resolution that is
          *      supported by your camera.  This will improve overall performance and reduce latency.
-         *  - Choose your video source.  This may be
-         *      .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))  .....   for a webcam
-         *  or
-         *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
+         *  - Choose your video source.
          */
+        
         VisionPortal portal = new VisionPortal.Builder()
-                .addProcessors(colorSensor11, colorSensor12, colorSensor13, colorSensor21, colorSensor22, colorSensor23, colorSensor31, colorSensor32, colorSensor33)
+                .addProcessors(sectors)
                 .setCameraResolution(new Size(320, 240))
                 .setCamera(hardwareMap.get(WebcamName.class, "Camera"))
                 .build();
@@ -207,147 +133,58 @@ public class VisionColorSensor extends LinearOpMode
         while (opModeIsActive() || opModeInInit())
         {
 
-            /*
+
             telemetry.addData("DS preview on/off", "3 dots, Camera Stream\n");
-            */
+
 
             // Request the most recent color analysis.
             // This will return the closest matching colorSwatch and the predominant RGB color.
-            // Note: to take actions based on the detected color, simply use the colorSwatch in a comparison or switch.
-            //  eg:
-            //      if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {... some code  ...}
 
 
-            PredominantColorProcessor.Result result11 = colorSensor11.getAnalysis();
-            PredominantColorProcessor.Result result12 = colorSensor12.getAnalysis();
-            PredominantColorProcessor.Result result13 = colorSensor13.getAnalysis();
-            PredominantColorProcessor.Result result21 = colorSensor21.getAnalysis();
-            PredominantColorProcessor.Result result22 = colorSensor22.getAnalysis();
-            PredominantColorProcessor.Result result23 = colorSensor23.getAnalysis();
-            PredominantColorProcessor.Result result31 = colorSensor31.getAnalysis();
-            PredominantColorProcessor.Result result32 = colorSensor32.getAnalysis();
-            PredominantColorProcessor.Result result33 = colorSensor33.getAnalysis();
+            PredominantColorProcessor.Result[] results = new PredominantColorProcessor.Result[sectors.length];
+            for (int i = 0; i < sectors.length; i++) {
+                results[i] = sectors[i].getAnalysis();
+            }
 
+            //Returns the sector with the most red in it after the threshold of 190, if it didn't get past 190 then it will return sector 0.
 
             int maxRed = 190;
             int resultMaxRed = 0;
-            if (Color.red(result11.rgb) > maxRed) {
-                maxRed = Color.red(result11.rgb);
-                resultMaxRed = 1;
-            }
-            if (Color.red(result12.rgb) > maxRed) {
-                maxRed = Color.red(result12.rgb);
-                resultMaxRed = 2;
-            }
-            if (Color.red(result13.rgb) > maxRed) {
-                maxRed = Color.red(result13.rgb);
-                resultMaxRed = 3;
-            }
-            if (Color.red(result21.rgb) > maxRed) {
-                maxRed = Color.red(result21.rgb);
-                resultMaxRed = 4;
-            }
-            if (Color.red(result22.rgb) > maxRed) {
-                maxRed = Color.red(result22.rgb);
-                resultMaxRed = 5;
-            }
-            if (Color.red(result23.rgb) > maxRed) {
-                maxRed = Color.red(result23.rgb);
-                resultMaxRed = 6;
-            }
-            if (Color.red(result31.rgb) > maxRed) {
-                maxRed = Color.red(result31.rgb);
-                resultMaxRed = 7;
-            }
-            if (Color.red(result32.rgb) > maxRed) {
-                maxRed = Color.red(result32.rgb);
-                resultMaxRed = 8;
-            }
-            if (Color.red(result33.rgb) > maxRed) {
-                maxRed = Color.red(result33.rgb);
-                resultMaxRed = 9;
+
+            for (int i = 0; i <= 9; i++) {
+                int red = Color.red(results[i].rgb);
+                if (red > maxRed) {
+                    maxRed = red;
+                    resultMaxRed = i;
+                }
             }
 
 
+            //Returns the sector with the most blue in it after the threshold of 145, if it didn't get past 145 then it will return sector 0.
 
             int maxBlue = 145;
             int resultMaxBlue = 0;
-            if (Color.blue(result11.rgb) > maxBlue) {
-                maxBlue = Color.blue(result11.rgb);
-                resultMaxBlue = 1;
-            }
-            if (Color.blue(result12.rgb) > maxBlue) {
-                maxBlue = Color.blue(result12.rgb);
-                resultMaxBlue = 2;
-            }
-            if (Color.blue(result13.rgb) > maxBlue) {
-                maxBlue = Color.blue(result13.rgb);
-                resultMaxBlue = 3;
-            }
-            if (Color.blue(result21.rgb) > maxBlue) {
-                maxBlue = Color.blue(result21.rgb);
-                resultMaxBlue = 4;
-            }
-            if (Color.blue(result22.rgb) > maxBlue) {
-                maxBlue = Color.blue(result22.rgb);
-                resultMaxBlue = 5;
-            }
-            if (Color.blue(result23.rgb) > maxBlue) {
-                maxBlue = Color.blue(result23.rgb);
-                resultMaxBlue = 6;
-            }
-            if (Color.blue(result31.rgb) > maxBlue) {
-                maxBlue = Color.blue(result31.rgb);
-                resultMaxBlue = 7;
-            }
-            if (Color.blue(result32.rgb) > maxBlue) {
-                maxBlue = Color.blue(result32.rgb);
-                resultMaxBlue = 8;
-            }
-            if (Color.blue(result33.rgb) > maxBlue) {
-                maxBlue = Color.blue(result33.rgb);
-                resultMaxBlue = 9;
+            for (int i = 0; i <= 9; i++) {
+                int blue = Color.blue(results[i].rgb);
+                if (blue > maxBlue) {
+                    maxBlue = blue;
+                    resultMaxBlue = i;
+                }
             }
 
+            //Returns the sector with the most yellow in it after the threshold of 145, if it didn't get past 145 then it will return sector 0.
 
             int maxYellow = 145;
             int resultMaxYellow = 0;
-            if (result11.rgb > maxYellow) {
-                maxYellow = yellow(result11.rgb);
-                resultMaxYellow = 1;
+            for (int i = 0; i <= 9; i++) {
+                int yellow = yellow(results[i].rgb);
+                if (yellow > maxYellow) {
+                    maxYellow = yellow;
+                    resultMaxYellow = i;
+                }
             }
-            if (yellow(result12.rgb) > maxYellow) {
-                maxYellow = yellow(result12.rgb);
-                resultMaxYellow = 2;
-            }
-            if (yellow(result13.rgb) > maxYellow) {
-                maxYellow = yellow(result13.rgb);
-                resultMaxYellow = 3;
-            }
-            if (yellow(result21.rgb) > maxYellow) {
-                maxYellow = yellow(result21.rgb);
-                resultMaxYellow = 4;
-            }
-            if (yellow(result22.rgb) > maxYellow) {
-                maxYellow = yellow(result22.rgb);
-                resultMaxYellow = 5;
-            }
-            if (yellow(result23.rgb) > maxYellow) {
-                maxYellow = yellow(result23.rgb);
-                resultMaxYellow = 6;
-            }
-            if (yellow(result31.rgb) > maxYellow) {
-                maxYellow = yellow(result31.rgb);
-                resultMaxYellow = 7;
-            }
-            if (yellow(result32.rgb) > maxYellow) {
-                maxYellow = yellow(result32.rgb);
-                resultMaxYellow = 8;
-            }
-            if (yellow(result33.rgb) > maxYellow) {
-                maxYellow = yellow(result33.rgb);
-                resultMaxYellow = 9;
-            }
+
+            //Adds to telemetry the values of the max of each sector and the most red sector, the most blue sector, and the most yellow sector after the threshold.
 
             telemetry.addData("max yellow: ", maxYellow);
             telemetry.addData("max red: ", maxRed);
@@ -356,34 +193,6 @@ public class VisionColorSensor extends LinearOpMode
             telemetry.addData("Best Blue Match:", resultMaxBlue);
             telemetry.addData("Best Yellow Match:", resultMaxYellow);
             telemetry.update();
-
-
-            /*
-            // Display the Color Sensor result.
-            telemetry.addData("Best Match 1:1:", result11.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result11.rgb), Color.green(result11.rgb), Color.blue(result11.rgb)));
-            telemetry.addData("Best Match 1:2:", result12.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result12.rgb), Color.green(result12.rgb), Color.blue(result12.rgb)));
-            telemetry.addData("Best Match 1:3:", result13.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result13.rgb), Color.green(result13.rgb), Color.blue(result13.rgb)));
-            telemetry.addData("Best Match 2:1:", result21.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result21.rgb), Color.green(result21.rgb), Color.blue(result21.rgb)));
-            telemetry.addData("Best Match 2:2:", result22.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result22.rgb), Color.green(result22.rgb), Color.blue(result22.rgb)));
-            telemetry.addData("Best Match 2:3:", result23.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result23.rgb), Color.green(result23.rgb), Color.blue(result23.rgb)));
-            telemetry.addData("Best Match 3:1:", result31.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result31.rgb), Color.green(result31.rgb), Color.blue(result31.rgb)));
-            telemetry.addData("Best Match 3:2:", result32.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result32.rgb), Color.green(result32.rgb), Color.blue(result32.rgb)));
-            telemetry.addData("Best Match 3:3:", result33.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result33.rgb), Color.green(result33.rgb), Color.blue(result33.rgb)));
-            telemetry.update();
-            */
-
-
-
-            sleep(20);
         }
     }
 }
