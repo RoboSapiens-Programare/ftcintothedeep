@@ -38,17 +38,17 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 public class VisionColorSensor extends LinearOpMode
 {
     public int yellow(int rgb) {
-        // Extract red, green, and blue components from the RGB value
+        //Extract red, green, and blue components from the RGB value
 
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
 
-        // Calculate yellow component by combining red and green, minus blue influence
+        //Calculate yellow component by combining red and green, minus blue influence
 
         int yellowComponent = (red + green - blue) / 2;
 
-        // Ensure the result is within 0-255 range
+        //Ensure the result is within 0-255 range
 
         return Math.max(0, Math.min(255, yellowComponent));
     }
@@ -151,7 +151,7 @@ public class VisionColorSensor extends LinearOpMode
             int maxRed = 190;
             int resultMaxRed = 0;
 
-            for (int i = 0; i <= 9; i++) {
+            for (int i = 0; i < 9; i++) {
                 int red = Color.red(results[i].rgb);
                 if (red > maxRed) {
                     maxRed = red;
@@ -164,7 +164,7 @@ public class VisionColorSensor extends LinearOpMode
 
             int maxBlue = 145;
             int resultMaxBlue = 0;
-            for (int i = 0; i <= 9; i++) {
+            for (int i = 0; i < 9; i++) {
                 int blue = Color.blue(results[i].rgb);
                 if (blue > maxBlue) {
                     maxBlue = blue;
@@ -176,7 +176,7 @@ public class VisionColorSensor extends LinearOpMode
 
             int maxYellow = 145;
             int resultMaxYellow = 0;
-            for (int i = 0; i <= 9; i++) {
+            for (int i = 0; i < 9; i++) {
                 int yellow = yellow(results[i].rgb);
                 if (yellow > maxYellow) {
                     maxYellow = yellow;
